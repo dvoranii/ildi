@@ -22,8 +22,8 @@ public class Blackjack extends Game {
         ArrayList<Player> playerList = getPlayers();
         BlackjackPlayer dealer = new BlackjackPlayer("Dealer");
 
-        playerList.add(dealer);
         playerList.add(player);
+        playerList.add(dealer);
 
         this.setPlayers(playerList);
     }
