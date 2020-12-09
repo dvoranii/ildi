@@ -25,6 +25,7 @@ public class BlackjackPlayer extends Player{
     }
     
     public void calcHandValue(){
+        this.handValue = 0;
         //Adds up the total Value of the Hand
         for(Card c : this.hand){
             CardFor52Deck d = (CardFor52Deck)c;

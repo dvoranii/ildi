@@ -47,8 +47,12 @@ public class Blackjack extends Game {
 
             if (!p.getName().equals("Dealer")) {
                 playerPrompt(p);
+            } else {
+                dealerTurn(p);
             }
         }
+        
+        
 
     }
     /**
@@ -94,7 +98,7 @@ public class Blackjack extends Game {
         if (playerChoice == 1) {
             hit(p);
         } else if (playerChoice == 2) {
-            
+            //continues to the to prompt the next player in playerList
         }
 
     }
@@ -109,6 +113,26 @@ public class Blackjack extends Game {
         p.getHand().addAll(deck.draw(1));
         displayHands();
         playerPrompt(p);
+    }
+    
+    public void dealerTurn(BlackjackPlayer p){
+        System.out.println("Dealers turn \n");
+        System.out.println("The dealer reveals their hand.");
+        System.out.println(p.getName() + " Hand: " + p.getHand().toString());
+        p.calcHandValue();
+        
+        while(p.getHandValue() < 17){
+            //draw a card (hit)
+            p.getHand().addAll(deck.draw(1));
+            System.out.println("The dealer hits.");
+            //show what the dealer drew
+            System.out.println(p.getName() + " Hand: " + p.getHand().toString());
+            //check new handValue and if under 17 repeat
+            p.calcHandValue();
+        }
+        //Displays the dealer final hand value
+        System.out.println("The dealer hand value is: " + p.getHandValue());
+        
     }
 
     @Override
