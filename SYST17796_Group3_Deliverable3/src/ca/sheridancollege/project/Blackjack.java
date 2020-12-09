@@ -30,51 +30,52 @@ public class Blackjack extends Game {
 
     @Override
     public void play() {
-        System.out.println("Welcome to the Game!");
+        System.out.println("Welcome to the Game!\n\n");
         //creates deck
         deck = new GroupOfCards();
-        //makes deck a standrad 52 card deck
-        deck.init52Deck();
-        //shuffles deck
-        deck.shuffle();
-        //deals 2 to each player
-        startingDeal();
-        //shows the first deal
-        displayHands();
-        //Goes through every p[layer in the game to prompt them to hit or stand
-        for (Player player : this.getPlayers()) {
-            BlackjackPlayer p = (BlackjackPlayer) player;
+        int i = 0;
+        while (i < 5) {
+            System.out.println("Begin Round " + (i + 1) + "\n");
+            //makes deck a standrad 52 card deck
+            deck.init52Deck();
+            //shuffles deck
+            deck.shuffle();
+            //deals 2 to each player
+            System.out.println("The dealer deals 2 cards to each player.\n");
+            startingDeal();
+            //shows the first deal
+            displayHands();
+            //Goes through every p[layer in the game to prompt them to hit or stand
+            for (Player player : this.getPlayers()) {
+                BlackjackPlayer p = (BlackjackPlayer) player;
 
-            if (!p.getName().equals("Dealer")) {
-                playerPrompt(p);
-            } else {
-                dealerTurn(p);
+                if (!p.getName().equals("Dealer")) {
+                    playerPrompt(p);
+                } else {
+                    dealerTurn(p);
+                }
             }
-        }
-        
-        
 
+            roundEnd();
+            i++;
+        }
+        System.out.println("Game Over!");
+        displayScores();
     }
+
     /**
-     * Displays the hands off all players in the game including Dealer.
-     * Dealer hand displays the first card as UNKNOWN
+     * Displays the hands off all players in the game including Dealer. Dealer
+     * hand displays the first card as UNKNOWN
      */
     public void displayHands() {
         //Displays player hands
         for (Player player : this.getPlayers()) {
-            BlackjackPlayer p = (BlackjackPlayer) player;
-
-            if (p.getName().equals("Dealer")) {
-                System.out.print(p.getName() + "Hand: UNKNOWN + ");
-                for (int i = 1; i < p.getHand().size(); i++) {
-                    System.out.print(p.getHand().get(i).toString());
-                }
-                System.out.println("");
-            } else {
-                System.out.println(p.getName() + " Hand: " + p.getHand().toString());
-            }
-
+            BlackjackPlayer p = (BlackjackPlayer) player;            
+            p.calcHandValue();
+            p.displayHand();
+            
         }
+        System.out.println("");
     }
 
     public void startingDeal() {
@@ -84,10 +85,11 @@ public class Blackjack extends Game {
             p.setHand(deck.draw(2));
         }
     }
+
     /**
-     * Prompts the player whether to hit or stand.
-     * If hit is selected hit() is called which in turn recalls PlayerPrompt().
-     * If stand is selected
+     * Prompts the player whether to hit or stand. If hit is selected hit() is
+     * called which in turn recalls PlayerPrompt(). If stand is selected
+     *
      * @param p - the BlackjackPlayer that is being prompted to play.
      */
     public void playerPrompt(BlackjackPlayer p) {
@@ -104,24 +106,36 @@ public class Blackjack extends Game {
     }
 
     /**
-     * Draws one card form deck into the player hand.
-     * After drawing the card it then displays all players hands and prompts
-     * player p again.
+     * Draws one card from deck into the player hand. After drawing the card it
+     * then displays all players hands and prompts player p again. If the hit
+     * send the players hand value of 21 go to next player and display bust
+     * message.
+     *
      * @param p - the BlackjackPlayer this has selected to hit
      */
     public void hit(BlackjackPlayer p) {
         p.getHand().addAll(deck.draw(1));
+        p.calcHandValue();
+        System.out.println("You are dealt one card.\n");
+
+        if (p.getHandValue() > 21) {
+            p.displayHand();
+            System.out.println("You Busted! -- Next Player's Turn.");
+            p.setHandValue(0);
+            return;
+        }
+
         displayHands();
         playerPrompt(p);
     }
-    
-    public void dealerTurn(BlackjackPlayer p){
+
+    public void dealerTurn(BlackjackPlayer p) {
         System.out.println("Dealers turn \n");
         System.out.println("The dealer reveals their hand.");
         System.out.println(p.getName() + " Hand: " + p.getHand().toString());
         p.calcHandValue();
-        
-        while(p.getHandValue() < 17){
+
+        while (p.getHandValue() < 17) {
             //draw a card (hit)
             p.getHand().addAll(deck.draw(1));
             System.out.println("The dealer hits.");
@@ -132,7 +146,43 @@ public class Blackjack extends Game {
         }
         //Displays the dealer final hand value
         System.out.println("The dealer hand value is: " + p.getHandValue());
-        
+
+    }
+
+    public void roundEnd() {
+        checkRoundWinner();
+        displayScores();
+    }
+
+    public void checkRoundWinner() {
+        int winIndex = 0;
+        int i = 0;
+        int highestHand = 0;
+        for (Player player : this.getPlayers()) {
+            BlackjackPlayer p = (BlackjackPlayer) player;
+            p.calcHandValue();
+
+            if (p.getHandValue() > highestHand && p.getHandValue() <= 21) {
+                highestHand = p.getHandValue();
+                winIndex = i;
+            }
+
+            i++;
+
+        }
+        BlackjackPlayer winner = (BlackjackPlayer) this.getPlayers().get(winIndex);
+
+        winner.setScoreCount(winner.getScoreCount() + 1);
+
+        System.out.println(this.getPlayers().get(winIndex).getName());
+    }
+
+    public void displayScores() {
+        for (Player player : this.getPlayers()) {
+            BlackjackPlayer p = (BlackjackPlayer) player;
+
+            System.out.println(p.getName() + " Score: " + p.getScoreCount());
+        }
     }
 
     @Override
