@@ -15,7 +15,7 @@ public class main {
 
     public static void main(String[] args) {
 
-        BlackjackPlayer user = new BlackjackPlayer("Player 1");
+        BlackjackPlayer user = new BlackjackPlayer("Player");
         
         Blackjack mainGame = new Blackjack("Blackjack", user);
         
