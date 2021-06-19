@@ -1,4 +1,4 @@
-# ildi
+# Ildi Dvorani
 Exercise 1 deliverable 
 Card game assignment - Group 3
 
